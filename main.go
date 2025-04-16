@@ -17,6 +17,36 @@ func getName() string {
 	return name
 }
 
+func getBet(balance uint) uint {
+	var bet uint
+
+	//Equivilant to a while loop
+	for true {
+		fmt.Printf("Enter your bet (balance = $%d): ", balance)
+		fmt.Scan(&bet)
+
+		if bet > balance {
+			fmt.Println("Insufficient balance. Try again.")
+		} else {
+			break
+		}
+	}
+
+	return bet
+}
+
 func main() {
+	balance := uint(200)
+
 	getName()
+	for balance > 0 {
+		bet := getBet(balance)
+		if bet == 0 {
+			break
+		}
+
+		balance -= bet
+	}
+
+	fmt.Printf("You left with, %d.\n", balance)
 }
