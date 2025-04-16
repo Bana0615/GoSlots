@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"fmt"
 )
@@ -23,14 +22,25 @@ func GetName() string {
 func GetBet(balance uint) uint {
 	var bet uint
 
-	//Equivilant to a while loop
-	for true {
-		fmt.Printf("Enter your bet (balance = $%d): ", balance)
-		fmt.Scan(&bet)
+	for {
+		// Prompt the user, including current balance
+		fmt.Printf("Enter your bet (balance = $%d, enter 0 to quit): ", balance)
 
+		// Attempt to scan directly into the uint variable
+		_, err := fmt.Scan(&bet)
+
+		if err != nil {
+			// If scanning fails (e.g., user typed text), print an error.
+			fmt.Println("Invalid bet. Please enter a whole non-negative number.")
+			// Continue the loop to ask for input again
+			continue
+		}
+
+		// If Scan succeeded, check if the bet is within the player's balance
 		if bet > balance {
 			fmt.Println("Insufficient balance. Try again.")
 		} else {
+			// Bet is a valid uint and within balance (or 0 to quit), exit the loop
 			break
 		}
 	}
