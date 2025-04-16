@@ -83,6 +83,18 @@ func getRandomNumber(min int, max int) int {
 	return rand.Intn(max-min+1) + min
 }
 
+func printSpin(spin [][]string) {
+	for _, row := range spin {
+		for i, symbol := range row {
+			fmt.Printf("%s ", symbol)
+			if i != len(row)-1 {
+				fmt.Print(" | ")
+			}
+		}
+		fmt.Println()
+	}
+}
+
 func main() {
 	// Setting odds for symbols to show up
 	symbols := map[string]uint{
@@ -100,7 +112,7 @@ func main() {
 	// }
 	symbolArray := generateSymbolArray(symbols)
 	spin := getSpin(symbolArray, 3, 3)
-	fmt.Println(spin)
+	printSpin(spin)
 
 	balance := uint(200)
 
