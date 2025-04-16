@@ -50,6 +50,10 @@ func generateSymbolArray(symbols map[string]uint) []string {
 	return symbolArray
 }
 
+func getRandomNumber(min int, max int) int {
+	return rand.Intn(max-min+1) + min
+}
+
 func getSpin(reel []string, rows int, cols int) [][]string {
 	spin := [][]string{}
 
@@ -71,16 +75,10 @@ func getSpin(reel []string, rows int, cols int) [][]string {
 					break
 				}
 			}
-
-			spin[col] = append(spin[col], reel[row])
 		}
 	}
 
 	return spin
-}
-
-func getRandomNumber(min int, max int) int {
-	return rand.Intn(max-min+1) + min
 }
 
 func printSpin(spin [][]string) {
@@ -95,6 +93,32 @@ func printSpin(spin [][]string) {
 	}
 }
 
+func checkWin(spin [][]string, multipliers map[string]uint) []uint {
+	lines := []uint{}
+
+	for _, row := range spin {
+		win := true
+
+		checkSymbol := row[0]
+
+		//Skip the first element in the row
+		for _, symbol := range row[1:] {
+			if symbol != checkSymbol {
+				win = false
+				break
+			}
+		}
+
+		if win {
+			lines = append(lines, multipliers[checkSymbol])
+		} else {
+			lines = append(lines, 0)
+		}
+	}
+
+	return lines
+}
+
 func main() {
 	// Setting odds for symbols to show up
 	symbols := map[string]uint{
@@ -104,15 +128,13 @@ func main() {
 		"D": 20,
 	}
 	// Bet multiplier if you get a line of the symbols
-	// multipliers := map[string]uint{
-	// 	"A": 20,
-	// 	"B": 10,
-	// 	"C": 5,
-	// 	"D": 2,
-	// }
+	multipliers := map[string]uint{
+		"A": 20,
+		"B": 10,
+		"C": 5,
+		"D": 2,
+	}
 	symbolArray := generateSymbolArray(symbols)
-	spin := getSpin(symbolArray, 3, 3)
-	printSpin(spin)
 
 	balance := uint(200)
 
@@ -124,6 +146,19 @@ func main() {
 		}
 
 		balance -= bet
+		spin := getSpin(symbolArray, 3, 3)
+		printSpin(spin)
+
+		//Check if they win and update balance
+		winningLines := checkWin(spin, multipliers)
+		for i, multi := range winningLines {
+			win := multi * bet
+			balance += win
+
+			if multi > 0 {
+				fmt.Printf("You won $%d, (%dx) on line %d\n", win, multi, i+1)
+			}
+		}
 	}
 
 	fmt.Printf("You left with, %d.\n", balance)
